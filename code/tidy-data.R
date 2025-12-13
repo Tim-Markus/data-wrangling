@@ -88,6 +88,71 @@ dat %>%
   rename(fertility = fertility_NA)
 
 
-data("us_contagious_diseases")
+data(us_contagious_diseases)
 head(us_contagious_diseases)
+dat_wide <- us_contagious_diseases
+
+dat_tidy <- dat_wide %>%
+  pivot_longer(-state, names_to = "disease", values_to = "count")
+
+d <- read_csv("resources/times.csv", col_types="dcccc")
+head(d)
+
+tidy_data <- d %>%
+  pivot_longer(-age_group, names_to = "key", values_to = "value") %>% 
+  separate(col  = key, into  = (c("year", "variable_name")), sep = "_") %>% 
+  pivot_wider(names_from = variable_name, values_from = value)
+head(tidy_data)
+
+
+stats <- read.csv("resources/stats.csv")
+head(stats)
+
+stats %>%
+  separate(col = key, into = c("player", "variable_name"), sep = "_", extra = "merge") %>% 
+  pivot_wider(names_from = variable_name, values_from = value)
+
+stats %>%
+  separate(col = key, into = c("player", "variable_name"), sep = "_") %>% 
+  pivot_wider(names_from = variable_name, values_from = value)
+
+
+library(tidyverse)
+library(dslabs)
+
+head(co2)
+
+co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) %>% 
+  setNames(1:12) %>%
+  mutate(year = as.character(1959:1997))
+head(co2_wide)
+
+co2_tidy <- pivot_longer(co2_wide, -year, names_to = "month", values_to = "co2")
+
+co2_tidy %>% ggplot(aes(as.numeric(month), co2, color = year)) + geom_line()
+
+
+
+
+library(dslabs)
+data(admissions)
+dat <- admissions %>% select(-applicants)
+
+head(dat)
+pivot_wider(dat, names_from = admitted, values_from = major)
+
+
+
+tmp <- admissions %>%
+  pivot_longer(cols = c(admitted, applicants), names_to = "key", values_to = "value")
+tmp
+
+tmp2 <- unite(tmp, column_name, c(key, gender))
+tmp2
+
+
+
+
+
+
 
