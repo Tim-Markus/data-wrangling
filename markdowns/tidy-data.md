@@ -46,3 +46,42 @@ If there is an extra separation, we can use `extra = "merge"` to merge the last 
 -   3rd - is the name of the second part of the new column.
 
 -   4th - is the separator to use between values.
+
+## Combining Tables
+
+The `join` functions in the **dplyr** package combine two tables such that matching rows are together.
+
+-   `left_join()` - only keeps rows that have information in the first table.
+-   `right_join()` - only keeps rows that have information in the second table.
+-   `inner_join()` - only keep rows that have information in the both tables.
+-   `full_join()` - keeps all rows from both tables.
+-   `semi_join()` - keeps the part of the first tables for which we have information in the second.
+-   `anti_join()` - keeps the elements of the first table for which we there is no information in the second.
+
+![](images/joins.png)
+
+### Binding
+
+Unlike the join functions, the binding functions do not try to match by a variable, but rather just combine datasets.
+
+-   `bind_cols()` - binds two objects by making them columns in a tibble.
+
+    -   The R-base function `cbind()` bind columns but makes a data frame or matrix instead.
+
+-   `bind_rows()` - function is similar but binds rows instead of a columns.
+
+    -   The R-base function `rbind()` binds rows but makes a data frame or matrix instead.
+
+### Set Operators
+
+By default, the set operators in R-base work on vectors. If **tidyverse/dplyr** are loaded, they also work on data frames.
+
+-   `intersect()` - take intersections of vectors. This returns the elements common to both sets.
+
+-   `union()` - take union of vectors. This return the elements that are in either set.
+
+-   `setdiff()` - set difference between a first and second argument.
+
+    -   this function is not symmetric.
+
+-   `set_equal()` - tells if two sets are the same, regardless of the order of elements.

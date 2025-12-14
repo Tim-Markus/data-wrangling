@@ -141,14 +141,124 @@ dat <- admissions %>% select(-applicants)
 head(dat)
 pivot_wider(dat, names_from = admitted, values_from = major)
 
-
-
 tmp <- admissions %>%
   pivot_longer(cols = c(admitted, applicants), names_to = "key", values_to = "value")
 tmp
 
 tmp2 <- unite(tmp, column_name, c(key, gender))
 tmp2
+
+
+
+
+
+
+
+# import US murders data
+library(tidyverse)
+library(ggrepel)
+library(dslabs)
+ds_theme_set()
+data(murders)
+head(murders)
+
+# import US election results data
+data(polls_us_election_2016)
+head(results_us_election_2016)
+identical(results_us_election_2016$state, murders$state)
+
+tab <- left_join(murders, results_us_election_2016, by="state")
+head(tab)
+
+tab %>% ggplot(aes(population/10^6, electoral_votes, label = abb)) +
+  geom_point() +
+  geom_text_repel() +
+  scale_x_continuous(trans = "log2") +
+  scale_y_continuous(trans = "log2") +
+  geom_smooth(method = "lm", se = FALSE)
+
+
+tab1 <- slice(murders, 1:6) %>% select(state, population)
+tab1
+tab2 <- slice(results_us_election_2016, c(1:3, 5, 7:8)) %>% select(state, electoral_votes)
+tab2
+
+#left_join
+left_join(tab1, tab2)
+tab1 %>% left_join(tab2)
+
+#right_join
+tab1 %>% right_join(tab2)
+
+#inner_join
+inner_join(tab1, tab2)
+
+#full_join
+full_join(tab1, tab2)
+
+#semi_join
+semi_join(tab1, tab2)
+
+#anti-join
+anti_join(tab1, tab2)
+
+
+
+
+bind_cols(a = 1:3, b = 4:6)
+
+tab1 <- tab[, 1:3]
+tab2 <- tab[, 4:6]
+tab3 <- tab[, 7:9]
+
+new_tab <- bind_cols(tab1, tab2, tab3)
+head(new_tab)
+
+tab1 <- tab[1:2,]
+tab2 <- tab[3:4,]
+
+tab1
+tab2
+
+bind_rows(tab1, tab2)
+
+
+
+
+# SET OPERATORS
+# intersection
+tab1 <- tab[1:5,]
+tab2 <- tab[3:7,]
+tab1
+tab2
+intersect(tab1, tab2)
+
+# union
+tab1 <- tab[1:5,]
+tab2 <- tab[3:7,]
+tab1
+tab2
+union(tab1, tab2)
+
+# set difference
+setdiff(1:10, 6:15)
+setdiff(6:15, 1:10)
+tab1 <- tab[1:5,]
+tab2 <- tab[3:7,]
+tab1
+tab2
+setdiff(tab1, tab2)
+
+# set equal
+setequal(1:5, 1:6)
+setequal(1:5, 5:1)
+
+setequal(tab1, tab2)
+
+
+
+
+
 
 
 
