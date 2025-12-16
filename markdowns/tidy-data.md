@@ -85,3 +85,15 @@ By default, the set operators in R-base work on vectors. If **tidyverse/dplyr**
     -   this function is not symmetric.
 
 -   `set_equal()` - tells if two sets are the same, regardless of the order of elements.
+
+## Web Scraping
+
+**Web scraping** or **web harvesting** — are the term used to describe the process of extracting data from a website.
+
+The `rvest` web harvesting package includes functions to extract nodes of an HTML document:
+
+-   `html_nodes()` — extracts all nodes of different types
+
+-   `html_node()` — extracts the first node.
+
+The `html_table()` — converts an HTML table to a data frame.
