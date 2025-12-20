@@ -97,3 +97,45 @@ The `rvest` web harvesting package includes functions to extract nodes of an HTM
 -   `html_node()` — extracts the first node.
 
 The `html_table()` — converts an HTML table to a data frame.
+
+# String Processing
+
+The most common tasks in string processing include:
+
+-   extracting numbers from strings
+
+-   removing unwanted characters from text
+
+-   finding and replacing characters
+
+-   extracting specific parts of strings
+
+-   converting free form text to more uniform formats
+
+-   splitting strings into multiple values
+
+The **stringr** package in the **tidyverse** contains string processing functions that follow a similar (`str_functionname`) and are compatible with the pipe.
+
+### Define Strings
+
+-   Define a string by surrounding text with either single quotes or double quotes.
+
+-   To include single quote inside a string, use a double quotes on the outside `"10'"`. To include a double quote inside a string, use single quotes on the outside `'10"'` .
+
+-   The **cat()** function displays a string as it is represented inside R.
+
+-   To include a double quote inside of a string surrounded by double quotes, use the **backslash ( \\ )** to escape the double quote `"5'10\""`. Escape a single quote to include it inside of a string defined by single quotes `'5\'10"'`.
+
+### stringr package
+
+-   The main types of string processing tasks are: detecting, locating, extracting and replacing elements of strings.
+
+-   The **stringr** package from the **tidyverse** includes a variety of string processing functions that begin with `str_` and take the string as the first argument, which makes them compatible the the pipe.
+
+-   The `str_detect()` can determine whether a string contains a certain pattern.
+
+-   The `str_replace_all()` can replace all instances of one pattern with another pattern. To remove a pattern, replace with the empty string `("")`.
+
+-   The `parse_number()` removes punctuation from strings and converts them to numeric.
+
+-   The `mutate_at()` performs the same transformation on the specified column numbers.
