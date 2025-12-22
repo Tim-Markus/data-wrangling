@@ -191,3 +191,13 @@ Define strings to test your regular expressions, including some elements that ma
     -   `?` means 1 or more instances.
 
 -   Before removing characters from strings with functions like `str_replace()` and `str_replace_all()` , consider whether that replacement would have unintended effects.
+
+### Groups with RegEx
+
+*Groups* are a powerful aspect of regex that permits the extraction of values. Groups are defined using parentheses. They don’t affect the pattern matching per se. Instead, it permits tools to identify specific parts of the pattern so we can extract them.
+
+-   Once we defined groups, we can use the function `str_match()` to extract the values these groups define. `str_extract()` extracts only strings that match a pattern, not the values defined by groups.
+
+-   We can refer to the **i**th group with **\\\\i**.
+
+    -   For example, refer to the value in the second group with \\\\2.

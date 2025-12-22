@@ -428,19 +428,195 @@ str_view_all(s, pattern)
 
 
 pattern <- "^[4-7]'\\d{1,2}\""
-yes <- c("5'7\"", "6'2\"", "5'12\"")
+yes <- c("5'7\"", "6'2\"", "7'12\"")
 no <- c("6,2\"", "6.2\"", "I am 5'11\"", "3'2\"", "64")
 str_detect(yes, pattern)
 str_detect(no, pattern)
 
-pattern <- "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-yes <- c("tim.r.uk@icloud.com", "r.tanya.14@icloud.com", "tim.markys.uk@gmail.com")
-str_view(yes, pattern)
+pattern <- "^[4-7]'\\d{1,2}\""
+sum(str_detect(problems, pattern))
+problems[c(2, 10, 11, 12, 15)] %>% str_view_all(pattern)
+
+str_subset(problems, "inches")
+str_subset(problems, "''")
+
+# changed pattern
+pattern <- "^[4-7]'\\d{1,2}$"
+problems %>%
+  str_replace("feet|ft|foot", "'") %>%
+  str_replace("inches|in|''|\"","") %>%
+  str_detect(pattern)
+problems
+
+# changed pattern #2
+pattern_2 <- "^[4-7]'\\s\\d{1,2}\"$"
+str_subset(problems, pattern_2)
+
+# * means 0 or more instances of a character
+yes <- c("AB", "A1B", "A11B", "A111B", "A1111B")
+no <- c("A2B", "A21B")
+str_detect(yes, "A1*B")
+str_detect(no, "A1*B")
+
+# test how *, ? and + differ
+data.frame(string = c("AB", "A1B", "A11B", "A111B", "A1111B"),
+           none_or_more = str_detect(yes, "A1*B"),
+           none_or_once = str_detect(yes, "A1?B"),
+           once_or_more = str_detect(yes, "A1+B"))
+
+# changed pattern #3
+pattern <- "^[4-7]\\s*'\\s*\\d{1,2}$"
+problems %>%
+  str_replace("feet|ft|foot", "'") %>%
+  str_replace("inches|in|''|\"", "") %>%
+  str_detect(pattern) %>%
+  sum
+
+
+# pattern without groups
+pattern_without_groups <- "^[4-7],\\d*$"
+pattern_with_groups <- "^([4-7]),(\\d*)$"
+
+# create examples
+yes <- c("5,9", "5,11", "6,", "6,1")
+no <- c("5'9", ",", "2,8", "6.1.1")
+s <- c(yes, no)
+
+# demonstrate the effect of groups
+str_detect(s, pattern_without_groups)
+str_detect(s, pattern_with_groups)
+
+str_match(s, pattern_with_groups)
+str_extract(s, pattern_with_groups)
+
+pattern_with_groups <- "^([4-7]),(\\d*)$"
+
+# create examples
+yes <- c("5,9", "5,11", "6,", "6,1")
+no <- c("5'9", ",", "2,8", "6.1.1")
+s <- c(yes, no)
+
+str_replace(s, pattern_with_groups, "\\1'\\2")
+
+# final pattern
+pattern_with_groups <- "^([4-7])\\s*[,\\.\\s+]\\s*(\\d*)$"
+str_subset(problems, pattern_with_groups) %>% head
+
+str_subset(problems, pattern_with_groups) %>% 
+  str_replace(pattern_with_groups, "\\1'\\2") %>% head
+
+
+# function to detect entries with problems
+not_inches_or_cm <- function(x, smallest = 50, tallest = 84){
+  inches <- suppressWarnings(as.numeric(x))
+  ind <- !is.na(inches) &
+    ((inches >= smallest & inches <= tallest) |
+       (inches/2.54 >= smallest & inches/2.54 <= tallest))
+  !ind
+}
+
+problems <- reported_heights %>%
+  filter(not_inches_or_cm(height)) %>%
+  .$height
+
+length(problems)
+
+converted <- problems %>%
+  str_replace("feet|foot|ft", "'") %>% #convert feet symbols to '
+  str_replace("inches|in|''|\"", "") %>% #convert inches symbols
+  str_replace("^([4-7])\\s*[,\\.\\s+]\\s*(\\d*)$", "\\1'\\2") #change format
+
+pattern <- "^[4-7]\\s*'\\s*\\d{1,2}$"
+index <- str_detect(converted, pattern)
+mean(index) * 100
+
+converted[!index]
+
+
+yes <- c("5", "6", "5")
+no <- c("5'", "5''", "5'4")
+s <- c(yes, no)
+str_replace(s, "^([4-7])$", "\\1'0")
+str_replace(s, "^([56])'?$", "\\1'0")
+
+
+pattern <- "^[4-7]\\s*'\\s*(\\d+\\.?\\d*)$"
+index <- str_detect(converted, pattern)
+mean(index) * 100
+
+converted
+
+
+yes <- c("1,7", "1, 8", "2, " )
+no <- c("5,8", "5,3,2", "1.7")
+s <- c(yes, no)
+str_replace(s, "^([12])\\s*,\\s*(\\d*)$", "\\1\\.\\2")
 
 
 
 
-pattern <- "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]+\\.[a-zA-Z]{2,}$"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+inches <- suppressWarnings(as.numeric(reported_heights$height))
+inches >= 50 & inches <= 84
+inches/2.54 >= 50 & inches/2.54 <= 84
+
+ind <- !is.na(inches) &
+  ((inches >= 50 & inches <= 84) |
+     (inches/2.54 >= 50 & inches/2.54 <= 84))
+!ind
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
