@@ -337,6 +337,111 @@ murders_raw %>% head
 
 
 
+library(dslabs)
+library(tidyverse)
+data("reported_heights")
+
+class(reported_heights$height)
+
+x <- as.numeric(reported_heights$height)
+head(x)
+sum(is.na(x))
+
+reported_heights %>% mutate(new_height = as.numeric(height)) %>%
+  filter(is.na(new_height)) %>%
+  head(n=10)
+
+not_inches <- function(x, smallest = 50, tallest = 84){
+  inches <- suppressWarnings(as.numeric(x))
+  inches
+  ind <- is.na(inches) | inches < smallest | inches > tallest
+  ind
+}
+
+problems <- reported_heights %>%
+  filter(not_inches(height)) %>%
+  .$height
+length(problems)
+
+problems
+
+# 10 examples of x'y or x'y" or x'y\"
+pattern <- "^\\d\\s*'\\s*\\d{1,2}\\.*\\d*'*\"*$"
+str_subset(problems, pattern) %>% head(n=10) %>% cat
+str_subset(problems, pattern) %>% length()
+
+# 10 examples of x.y or x,y
+pattern <- "^[4-6]\\s*[\\.|,]\\s*([0-9]|10|11)$"
+str_subset(problems, pattern) %>% head(n=10) %>% cat
+str_subset(problems, pattern) %>% length()
+
+# 10 examples of entries in cm rather than inches
+ind <- which(between(suppressWarnings(as.numeric(problems))/2.54, 54, 81))
+ind <- ind[!is.na(ind)]
+problems[ind] %>% head(n=10) %>% cat
+problems[ind] %>% length()
+
+
+str_subset(reported_heights$height, "cm")
+
+yes <- c("180cm", "70 inches")
+no <- c("180", "70''")
+s <- c(yes, no)
+str_detect(s, "cm") | str_detect(s, "inches")
+str_detect(s, "cm|inches")
+
+
+yes <- c("5", "6", "5'10", "5 feet", "4'11")
+no <- c("", ".", "Five", "six")
+s <- c(yes, no)
+pattern <- "\\d"
+str_detect(s, pattern)
+
+str_view(s, pattern)
+str_view_all(s, pattern)
+
+
+str_view(s, "[56]")
+
+yes <- as.character(4:7)
+no <- as.character(1:3)
+s <- c(yes, no)
+str_detect(s, "[4-7]")
+
+
+pattern <- "^\\d$"
+yes <- c("1", "5", "9")
+no <- c("12", "123", " 1", "a4", "b")
+s <- c(yes, no)
+str_view(s, pattern)
+str_detect(s, pattern)
+str_view_all(s, pattern)
+
+
+pattern <- "^\\d{1,2}$"
+yes <- c("1", "5", "9", "12")
+no <- c("123", "a4", "b")
+s <- c(yes, no)
+str_view(s, pattern)
+str_detect(s, pattern)
+str_view_all(s, pattern)
+
+
+pattern <- "^[4-7]'\\d{1,2}\""
+yes <- c("5'7\"", "6'2\"", "5'12\"")
+no <- c("6,2\"", "6.2\"", "I am 5'11\"", "3'2\"", "64")
+str_detect(yes, pattern)
+str_detect(no, pattern)
+
+pattern <- "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+yes <- c("tim.r.uk@icloud.com", "r.tanya.14@icloud.com", "tim.markys.uk@gmail.com")
+str_view(yes, pattern)
+
+
+
+
+pattern <- "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]+\\.[a-zA-Z]{2,}$"
+
 
 
 

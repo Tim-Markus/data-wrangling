@@ -139,3 +139,55 @@ The **stringr** package in the **tidyverse** contains string processing function
 -   The `parse_number()` removes punctuation from strings and converts them to numeric.
 
 -   The `mutate_at()` performs the same transformation on the specified column numbers.
+
+### Problems
+
+-   When there are both text and numeric entries in a column, the column will be a character vector. Converting this column to numeric will result in NAs for some entries.
+
+-   To correct problematic entries, look for patterns that are shared across large numbers of entries, then define rules that identify those patterns and use these rules to write string processing tasks.
+
+-   Use `suppressWarnings()` to hide warning messages for a function.
+
+## RegEx
+
+A regular expression (regex) is a way to describe a specific pattern of characters of text. A set rules has been designed to do this specifically and efficiently.
+
+-   **stingr** functions can take regex as a pattern.
+
+-   `str_detect()` indicates whether a pattern is present in a string.
+
+-   The main difference between a regex and a regular string is that a regex can include special character.
+
+-   The `|` symbol inside a regex means "or".
+
+-   Use '\\\\d' to represent digits. The backslash is used to distinguish it from the character 'd'. In R, we must use two backslashes for digits in regular expressions; in some other languages, we will only use one backslash for regex special characters.
+
+-   The `str_view()` highlights the first occurrence of the pattern, and the `str_view_all` highlights all occurrence of the pattern ( but it is deprecated )
+
+### Character Classes, Anchors and Quantifiers
+
+Define strings to test your regular expressions, including some elements that matches and some that do not. This allow to check for the two types of errors: **failing to match** and **matching incorrectly**.
+
+-   **Character classes** — groups of characters that count as matching pattern. To define character classes we use ranges, such as [0-9] for digits and [a-zA-Z] for all letters.
+
+-   **Anchors** — define patterns that must start or end at specific places. **\^** and **\$** represent the beginning and end of the string respectively.
+
+-   **Quantifiers** — state how many times a certain character can be repeated in the pattern. To define them we use Curly braces. `\\d{1,2}` matches exactly 1 or 2 consecutive digits.
+
+![](images/regex.png){width="780"}
+
+### Search and replace with RegEx
+
+-   `str_replace()` replaces the first instance of the detected pattern with a specified string.
+
+-   Spaces are characters and R does not ignore them. Spaces are specified by the special character **\\\\s.**
+
+-   Additional quantifiers include \*, + and ?.
+
+    -   `*` means 0 or more instances of the previous characters.
+
+    -   `+` means 0 or 1 instances.
+
+    -   `?` means 1 or more instances.
+
+-   Before removing characters from strings with functions like `str_replace()` and `str_replace_all()` , consider whether that replacement would have unintended effects.
