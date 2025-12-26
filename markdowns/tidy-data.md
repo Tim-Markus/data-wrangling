@@ -201,3 +201,61 @@ Define strings to test your regular expressions, including some elements that ma
 -   We can refer to the **i**th group with **\\\\i**.
 
     -   For example, refer to the value in the second group with \\\\2.
+
+### Separate with RegEx
+
+The `extract()` function behaves similarly to the `separate()` function but allows extraction from regular expressions.
+
+### Using Groups and Quantifiers
+
+#### Case 1
+
+Many students measuring exactly 5 or 6 feet did not enter any inches. For example, **6'** - our pattern requires that inches be included.
+
+-   For case 1, if we add a `'0` to, for example, convert all `6` to `6'0`, then our pattern will match. This can be done using groups using the following code: [tidy-data.R](../code/tidy-data.R) ( 579 - 582 lines )
+
+#### Case 2 and 4
+
+Some students measuring exactly 5 or 6 feet entered just that number.
+
+To handle case 2, we want to permit the 5 or 6 to be followed by no or one symbol for feet. So we can simply add **`'{0,1}`** after the **`'`** to do this. We can also use the none or once special character **`?`**. As we saw previously, this is different from **`*`** which is none or more. We now see that this code also handles the fourth case as well: [tidy-data.R](../code/tidy-data.R) ( 585 - 586 lines ).
+
+#### Case 3
+
+Some of the inches were entered with decimal points. For example **`5'7.5''`**. Our pattern only looks for two digits.
+
+We can use quantifiers to deal with  case 3. These entries are not matched because the inches include decimals and our pattern does not permit this. We need allow the second group to include decimals and not just digits. This means we must permit zero or one period **`.`** followed by zero or more digits. So we will use both **`?`** and **`*`**. Also remember that for this particular case, the period needs to be escaped since it is a special character (it means any character except a line break). We now see that this code also handles the third case as well: [tidy-data.R](../code/tidy-data.R) ( 589 - 593 lines ).
+
+#### Case 5
+
+Some entries are in meters and some of these use European decimals: **`1.6`, `1,7`**.
+
+Case 5, meters using commas, we can approach similarly to how we converted the `x.y` to `x'y`. A difference is that we require that the first digit is 1 or 2: [tidy-data.R](../code/tidy-data.R) ( 589 - 593 lines ).
+
+#### Trimming
+
+In general, spaces at the start or end of the string are uninformative. These can be particularly deceptive because sometimes they can be hard to see.
+
+This is a general enough problem that there is a function dedicated to removing them: `str_trim`:
+
+[tidy-data.R](../code/tidy-data.R) ( 604 - 608 lines ).
+
+#### To upper and to lower case
+
+One of the entries writes out numbers as words: **`Five foot eight inches`**. Although not efficient, we could add 12 extra **`str_replace`** to convert **`zero`** to **`0`**, **`one`** to **`1`**, and so on. To avoid having to write two separate operations for **`Zero`** and **`zero`**, **`One`** and **`one`**, etc., we can use the `str_to_lower()` function to make all words lower case first: [tidy-data.R](../code/tidy-data.R) ( 611 - 613 lines ).
+
+### String Splitting
+
+-   The function `str_split()` splits a string into a character vector on a delimiter ( such as a comma, space or underscore ). Bu default, `str_split()` generates a list with one element for each original string. Use the function argument `simplify = TRUE` to have `str_split()` return a matrix instead.
+
+-   The map function from the **purrr** package applies the same function to each element of a list. To extract th **i**th entry of each element `x`, use `map(x, i)`.
+
+-   `map()` always return a list. Use `map_chr()` to return a character vector and `map_int()` to return an integer.
+
+## Recoding
+
+We can change long factor names using just one function. Function is called `recored()`. This function is from **tidyverse** package.
+
+-   Other similar functions include **`recode_factor()`** and **`factor_recode()`** in the **forcast** package in **tidyverse**.
+
+-   The same result as in `recode()` function could be obtained using `case_when()` function, but `recode()` is more efficient to write.

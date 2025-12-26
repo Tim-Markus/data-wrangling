@@ -539,37 +539,16 @@ s <- c(yes, no)
 str_replace(s, "^([4-7])$", "\\1'0")
 str_replace(s, "^([56])'?$", "\\1'0")
 
-
 pattern <- "^[4-7]\\s*'\\s*(\\d+\\.?\\d*)$"
 index <- str_detect(converted, pattern)
 mean(index) * 100
 
 converted
 
-
 yes <- c("1,7", "1, 8", "2, " )
 no <- c("5,8", "5,3,2", "1.7")
 s <- c(yes, no)
 str_replace(s, "^([12])\\s*,\\s*(\\d*)$", "\\1\\.\\2")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 inches <- suppressWarnings(as.numeric(reported_heights$height))
 inches >= 50 & inches <= 84
@@ -580,44 +559,155 @@ ind <- !is.na(inches) &
      (inches/2.54 >= 50 & inches/2.54 <= 84))
 !ind
 
+library(tidyverse)
+s <- c("5'10", "6'1")
+tab <- data.frame(x=s)
+
+tab %>% separate(x, c("feet", "inches"), sep = "'")
+tab %>% extract(x, c("feet", "inches"), regex = "(\\d)'(\\d{1,2})")
+
+s <- c("5'10", "6'1\"", "5'8inches")
+tab <- data.frame(x=s)
+
+tab %>% separate(x, c("feet", "inches"), sep = "'", fill = "right")
+tab %>% extract(x, c("feet", "inches"), regex = "(\\d)'(\\d{1,2})")
 
 
 
 
+# Case 1
+yes <- c("5", "6", "5")
+no <- c("5'", "5''", "5'4")
+s <- c(yes, no)
+str_replace(s, "^([4-7])$", "\\1'0")
+
+
+# Case 2 and 4 (use the same strings as in case 1)
+str_replace(s, "^([56])'?$", "\\1'0")
+
+
+# Case 3
+pattern <- "^[4-7]\\s*'\\s*(\\d+\\.?\\d*)$"
+str_replace("5'7.5", pattern, "\\1'0")
+str_detect("5'7.5", pattern)
+str_view("5'7.5", pattern)
+
+
+# Case 5
+yes <- c("1,7", "1, 8", "2, " )
+no <- c("5,8", "5,3,2", "1.7")
+s <- c(yes, no)
+str_replace(s, "^([12])\\s*,\\s*(\\d*)$", "\\1\\.\\2")
 
 
 
+# Trimming
+s <- "Hi "
+cat(s)
+identical(s, "Hi")
+str_trim("5 ' 9 ")
 
 
+# To upper and lower case
+s <- c("Five feet eight inches")
+str_to_lower(s)
 
 
+# Putting it into a function
+convert_format <- function(s){
+  s %>%
+    str_replace("feet|foot|ft", "'") %>%
+    str_replace_all("inches|in|''|\"|cm|and", "") %>%
+    str_replace("^([4-7])\\s*[,\\.\\s+]\\s*(\\d*)$", "\\1'\\2") %>%
+    str_replace("^([56])'?$", "\\1'0") %>%
+    str_replace("^([12])\\s*,\\s*(\\d*)$", "\\1\\.\\2") %>%
+    str_trim()
+}
+
+words_to_numbers <- function(s){
+  str_to_lower(s) %>%
+    str_replace_all("zero", "0") %>%
+    str_replace_all("one", "1") %>%
+    str_replace_all("two", "2") %>%
+    str_replace_all("three", "3") %>%
+    str_replace_all("four", "4") %>%
+    str_replace_all("five", "5") %>%
+    str_replace_all("six", "6") %>%
+    str_replace_all("seven", "7") %>%
+    str_replace_all("eight", "8") %>%
+    str_replace_all("nine", "9") %>%
+    str_replace_all("ten", "10") %>%
+    str_replace_all("eleven", "11")
+}
+
+converted <- problems %>% words_to_numbers %>% convert_format
+remaining_problems <- converted[not_inches_or_cm(converted)]
+pattern <- "^[4-7]\\s*'\\s*\\d+\\.?\\d*$"
+index <- str_detect(remaining_problems, pattern)
+remaining_problems[!index]
 
 
+filename <- system.file("extdata/murders.csv", package = "dslabs")
+lines <- readLines(filename)
+lines %>% head
+
+x <- str_split(lines, ",")
+x %>% head
+col_names <- x[[1]]
+x <- x[-1]
+
+library(purrr)
+map(x, function(y) y[1]) %>% head
+map(x, 1) %>% head
+
+dat <- data.frame(map_chr(x, 1),
+                  map_chr(x, 2),
+                  map_chr(x, 3),
+                  map_chr(x, 4),
+                  map_chr(x, 5)) %>%
+  mutate_all(parse_guess) %>%
+  setNames(col_names)
+dat %>% head
+
+dat <- x %>%
+  transpose() %>%
+  map( ~ parse_guess(unlist(.))) %>%
+  setNames(col_names) %>%
+  as.data.frame()
+dat %>% head
 
 
+x <- str_split(lines, ",", simplify = TRUE)
+col_names <- x[1,]
+x <- x[-1,]
+x %>% as_tibble() %>%
+  setNames(col_names) %>%
+  mutate_all(parse_guess)
+
+x %>% head
 
 
+# Recoding
+library(dslabs)
+data("gapminder")
 
+gapminder %>% 
+  filter(region=="Caribbean") %>%
+  ggplot(aes(year, life_expectancy, color = country)) +
+  geom_line()
 
+# display long country names
+gapminder %>% 
+  filter(region=="Caribbean") %>%
+  filter(str_length(country) >= 12) %>%
+  distinct(country) 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# recode long country names and remake plot
+gapminder %>% filter(region=="Caribbean") %>%
+  mutate(country = recode(country, 
+                          'Antigua and Barbuda'="Barbuda",
+                          'Dominican Republic' = "DR",
+                          'St. Vincent and the Grenadines' = "St. Vincent",
+                          'Trinidad and Tobago' = "Trinidad")) %>%
+  ggplot(aes(year, life_expectancy, color = country)) +
+  geom_line()
