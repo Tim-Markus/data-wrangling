@@ -738,3 +738,149 @@ temp <- str_extract_all(polls$dates, "\\d+\\s[a-zA-Z]+")
 end_date <- sapply(temp, function(x) x[length(x)])
 end_date
 
+
+library(dslabs)
+library(tidyverse)
+data("polls_us_election_2016")
+polls_us_election_2016$startdate %>% head
+class(polls_us_election_2016$startdate)
+
+as.numeric(polls_us_election_2016$startdate) %>% head
+
+polls_us_election_2016 %>% filter(pollster == "Ipsos" & state == "U.S.") %>%
+  ggplot(aes(startdate, rawpoll_trump)) +
+  geom_line()
+
+
+library(lubridate)
+set.seed(2)
+dates <- sample(polls_us_election_2016$startdate, 10) %>% sort
+dates
+
+data.frame(date = days(dates),
+           month = month(dates),
+           day = day(dates),
+           year = year(dates))
+month(dates, label = TRUE)
+
+# ymd works on mixed date styles
+x <- c(20090101, "2009-01-02", "2009 01 03", "2009-1-4",
+       "2009-1, 5", "Created on 2009 1 6", "200901 !!! 07")
+ymd(x)
+
+x <- "09/01/02"
+ymd(x) # <-- 2009-01-02
+mdy(x) # <-- 2002-09-01
+ydm(x) # <-- 2009-02-01
+myd(x) # <-- 2001-09-02
+dmy(x) # <-- 2002-01-09
+dym(x) # <-- 2001-02-09
+
+now()
+now("GMT")
+
+now() %>% hour()
+now() %>% minute()
+now() %>% second()
+
+x <- c("12:34:56")
+hms(x)
+
+x <- c("Nov/2/2012 12:34:56")
+mdy_hms(x)
+
+
+
+library(dslabs)
+library(lubridate)
+options(digits = 3)
+
+data("brexit_polls")
+
+sum(month(brexit_polls$startdate) == 4)
+sum(round_date(brexit_polls$enddate, unit="week") == "2016-06-12")
+
+table(weekdays(brexit_polls$enddate))
+
+data("movielens")
+movielens %>% head
+
+dates <- as_datetime(movielens$timestamp)
+dates %>% head
+review_by_year <- table(year(dates))
+review_by_year
+names(which.max(review_by_year))
+
+review_by_hours <- table(hour(dates))
+names(which.max(review_by_hours))
+
+
+
+library(tidyverse)
+library(gutenbergr)
+library(tidytext)
+options(digits = 3)
+
+gutenberg_metadata %>%
+  filter(str_detect(title, "Pride and Prejudice"))
+
+gutenberg_works(author == "Austen, Jane")
+
+mirror <- "http://mirror.csclub.uwaterloo.ca/gutenberg/"
+book <- gutenberg_download(1342, mirror)
+
+words <- book %>%
+  unnest_tokens(word, text)
+nrow(words)
+
+#tweet_words <- campaign_tweets %>%
+  #mutate(text = str_replace_all(text, "https://t.co/[A-Za-z\\d]+|&amp;", "")) %>%
+  #unnest_tokens(word, text, token = "regex", pattern = pattern) %>%
+  #filter(!word %in% stop_words$word)
+
+words <- words %>% anti_join(stop_words)
+
+words <- words %>%
+  filter(!str_detect(word, "\\d"))
+nrow(words)
+
+words %>%
+  count(word) %>%
+  filter(n > 100) %>%
+  nrow()
+
+words %>%
+  count(word) %>%
+  top_n(1, n) %>%
+  pull(word)
+
+words %>%
+  filter(word == "elizabeth") %>%
+  count(word)
+
+afinn <- get_sentiments("afinn")
+
+afinn_sentiments <- words %>% inner_join(afinn)
+mean(afinn_sentiments$value > 0)
+
+sum(afinn_sentiments$value == 4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

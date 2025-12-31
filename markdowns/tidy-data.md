@@ -56,7 +56,7 @@ The `join` functions in the **dplyr** package combine two tables such that m
 -   `inner_join()` - only keep rows that have information in the both tables.
 -   `full_join()` - keeps all rows from both tables.
 -   `semi_join()` - keeps the part of the first tables for which we have information in the second.
--   `anti_join()` - keeps the elements of the first table for which we there is no information in the second.
+-   `anti_join()` - keeps the elements of the first table for which there is no information in the second.
 
 ![](images/joins.png)
 
@@ -259,3 +259,31 @@ We can change long factor names using just one function. Function is called `rec
 -   Other similar functions include **`recode_factor()`** and **`factor_recode()`** in the **forcast** package in **tidyverse**.
 
 -   The same result as in `recode()` function could be obtained using `case_when()` function, but `recode()` is more efficient to write.
+
+### Dates and Times
+
+Dates are a separate data type in R. The **tidyverse** includes functionality with dates through the **lubridate** package.
+
+-   We can extract the year, month, day and date from a data object with `year()`, `month()`, `day()` and `dates()` functions.
+
+-   Parsers convert strings into dates with the standard **YYYY-MM-DD** format ( `ISO 8601 format` ). Use the parsers with the name corresponding to the string format of year, month and day:
+
+    -   `ymd()` ——— **YYY-MM-DD**
+
+    -   `ydm()` ——— **YYY-DD-MM**
+
+    -   `myd()` ——— **MM-YYY-DD**
+
+    -   `mdy()` ——— **MM-DD-YYY**
+
+    -   `dmy()` ——— **DD-MM-YYY**
+
+    -   `dym()` ——— **DD-YYY-MM**
+
+-   We can get current time with the standard R function `Sys.time()` function. But also we can use function from the **lubridate** package `now()` to specify a time zone as argument.
+
+-   We can extract the hour, minute and second from a time object with `hour()`, `minute()` and `second()` functions.
+
+-   Parsers convert strings into times ( for example with `hms()` — **"12:34:56"** to **"12H 34M 56S"** )
+
+-   Parsers can also create combined data-time objects ( for example with `mdy_hms()` — **"Nov/2/2012 12:34:56"** to **"2012-11-02 12:34:56 UTC"**
